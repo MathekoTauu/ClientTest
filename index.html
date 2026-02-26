@@ -40,7 +40,10 @@
 <!-- NAV -->
 <nav aria-label="Primary">
  <div class="nav-logo">Jack's <span>Steel Craft</span></div>
-
+ <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+  <span class="nav-toggle-bar" aria-hidden="true"></span>
+ </button>
+ <div class="nav-menu" id="nav-menu">
   <div class="nav-links">
     <a href="#services">Services</a>
     <a href="#projects">Projects</a>
@@ -48,6 +51,7 @@
     <a href="#contact">Contact</a>
   </div>
   <a href="#inquiry" class="nav-cta">Get a Quote</a>
+ </div>
 </nav>
 
 <main id="main-content">
@@ -523,6 +527,46 @@ let mx = 0;
 let my = 0;
 let rx = 0;
 let ry = 0;
+
+// Mobile nav
+const nav = document.querySelector('nav[aria-label="Primary"]');
+const navToggle = document.querySelector('.nav-toggle');
+const mobileNavBreakpoint = window.matchMedia('(max-width: 900px)');
+
+function closeNav() {
+  if (!nav || !navToggle) return;
+  nav.classList.remove('nav-open');
+  navToggle.setAttribute('aria-expanded', 'false');
+  navToggle.setAttribute('aria-label', 'Open menu');
+}
+
+if (nav && navToggle) {
+  navToggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('nav-open');
+    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    navToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+  });
+
+  nav.querySelectorAll('.nav-menu a').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (mobileNavBreakpoint.matches) closeNav();
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeNav();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!mobileNavBreakpoint.matches) return;
+    if (!nav.classList.contains('nav-open')) return;
+    if (!nav.contains(event.target)) closeNav();
+  });
+
+  mobileNavBreakpoint.addEventListener('change', () => {
+    if (!mobileNavBreakpoint.matches) closeNav();
+  });
+}
 
 if (hasFinePointer && !prefersReducedMotion) {
   document.body.classList.add('custom-cursor-enabled');
